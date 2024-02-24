@@ -21,7 +21,7 @@ export const getIds = (page: number): Promise<IResponseIds[]> => {
     };
     const data = {
         action: 'get_ids',
-        'params': {'offset': currentOffset, 'limit': PRODUCTS_PER_PAGE}
+        'params': {'offset': currentOffset, 'limit': PRODUCTS_PER_PAGE+1}
     }
     const result: Promise<IResponseIds[]> = axios.post(URL, data, {headers});
     return result;
