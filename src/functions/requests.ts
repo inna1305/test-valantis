@@ -1,6 +1,6 @@
 import {md5} from 'js-md5';
 import axios from 'axios';
-import {IResponseIds} from '../App.tsx';
+import {IResponseIds} from '../App/App.tsx';
 import {IResponseItems} from '../types.ts';
 import getTimestamp from '../helpers/getTimestamp.ts';
 

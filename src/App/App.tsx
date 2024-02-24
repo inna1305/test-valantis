@@ -1,9 +1,9 @@
-import {Layout, Flex, Button, Spin} from 'antd';
+import {Layout, Flex, Spin} from 'antd';
 import {ReactElement, useEffect, useState} from 'react';
-import {getIds, getProducts, IResponseItems} from './functions/requests.ts';
-import {LeftOutlined, RightOutlined} from '@ant-design/icons';
-import Product from './components/Product.tsx';
-import FilterForm from './components/FilterForm.tsx';
+import {getIds, getProducts, IResponseItems} from '../functions/requests.ts';
+import Product from '../components/Product.tsx';
+import FilterForm from '../components/FilterForm.tsx';
+import Pagination from '../components/Pagination.tsx';
 
 const {Sider, Content, Footer} = Layout;
 
@@ -33,7 +33,6 @@ const App = (): ReactElement => {
                 setItems(resp.data.result);
                 setIsLoading(false);
             });
-        console.log('queries');
     }, [currentPage]);
 
     return (
@@ -69,18 +68,12 @@ const App = (): ReactElement => {
                                     price={`${item.price} p.`}
                                     name={item.product}
                                     key={item.id}/>)
-                            })}</Flex>
-                        <Flex justify="center" gap="20px">
-                            <Button disabled={currentPage === 1} icon={<LeftOutlined/>} onClick={() => {
-                                if (currentPage > 1) {
-                                    setCurrentPage(currentPage - 1)
-                                }
-                            }
-                            }></Button>
-                            <Button disabled={nextIsDisabled} icon={<RightOutlined/>} onClick={() => {
-                                setCurrentPage(currentPage + 1)
-                            }}></Button>
+                            })}
                         </Flex>
+                        <Pagination
+                            currentPage={currentPage}
+                            setCurrentPage={setCurrentPage}
+                            nextIsDisabled={nextIsDisabled}/>
                     </>}
                 </Content>}
 
