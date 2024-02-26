@@ -8,3 +8,14 @@ export interface IItem {
 export interface IResponseItems {
     result: IItem[];
 }
+
+export interface IFilterValue {
+    filter: FilterType,
+    value: string | number
+}
+
+export enum FilterType {
+    product = 'product',
+    brand = 'brand',
+    price = 'price'
+}

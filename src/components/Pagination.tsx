@@ -1,4 +1,4 @@
-import {Dispatch, ReactElement, SetStateAction} from 'react';
+import {Dispatch, memo, ReactElement, SetStateAction, useEffect} from 'react';
 import {Button, Flex} from 'antd';
 import {LeftOutlined, RightOutlined} from '@ant-design/icons';
 
@@ -7,7 +7,10 @@ interface IPaginationProps {
     setCurrentPage: Dispatch<SetStateAction<number>>,
     nextIsDisabled: boolean
 }
-const Pagination = (props: IPaginationProps): ReactElement => {
+const Pagination = memo ((props: IPaginationProps): ReactElement =>  {
+    useEffect(() => {
+        console.log('pagination was updated');
+    }, );
     return (<Flex justify="center" gap="20px">
         <Button disabled={props.currentPage === 1} icon={<LeftOutlined/>} onClick={() => {
             if (props.currentPage > 1) {
@@ -19,5 +22,5 @@ const Pagination = (props: IPaginationProps): ReactElement => {
             props.setCurrentPage(props.currentPage + 1)
         }}></Button>
     </Flex>);
-}
+});
 export default Pagination;

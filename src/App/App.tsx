@@ -1,21 +1,17 @@
 import {Layout, Flex, Spin} from 'antd';
 import {ReactElement, useEffect, useState} from 'react';
-import {getIds, getProducts, IResponseItems} from '../functions/requests.ts';
+import {getIds, getProducts} from '../functions/requests.ts';
 import Product from '../components/Product.tsx';
-import FilterForm from '../components/FilterForm.tsx';
+import Filters from '../components/Filters/Filters.tsx';
 import Pagination from '../components/Pagination.tsx';
+import {IItem} from '../types.ts';
 
 const {Sider, Content, Footer} = Layout;
 
-export interface IResponseIds {
-    result: string[];
-}
-
 const App = (): ReactElement => {
     const [currentPage, setCurrentPage] = useState(1);
-    const [ids, setIds] = useState<string[]>([]);
-    const [items, setItems] = useState<IResponseItems[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    //const [ids, setIds] = useState<string[]>([]);
+    const [items, setItems] = useState<IItem[]>([]);
     const [nextIsDisabled, setNextIsDisabled] = useState(false);
 
     useEffect(() => {
@@ -25,15 +21,17 @@ const App = (): ReactElement => {
                 if (arrIds.length <= 50) {
                     setNextIsDisabled(true);
                 }
-                setIds(arrIds);
-                return arrIds;
+                const uniqIds: string[] = Array.from(new Set(arrIds));
+                //setIds(uniqIds);
+                return uniqIds;
             })
             .then(ids => getProducts(ids))
             .then(resp => {
-                setItems(resp.data.result);
-                setIsLoading(false);
+                const items = resp.data.result;
+                setItems(items);
             });
     }, [currentPage]);
+
 
     return (
         <Layout hasSider>
@@ -44,7 +42,7 @@ const App = (): ReactElement => {
                     overflow: 'auto',
                     height: '100vh',
                 }}>
-                <FilterForm/>
+                <Filters />
             </Sider>
             <Layout> {
                 <Content
@@ -55,7 +53,7 @@ const App = (): ReactElement => {
                         background: 'light',
                         borderRadius: '10px',
                     }}
-                >{isLoading ?
+                >{items.length === 0 ?
                     <Spin tip="Загрузка..." size="large" style={{marginTop: '20%'}}>
                         <div className="content"/>
                     </Spin> :
@@ -65,7 +63,7 @@ const App = (): ReactElement => {
                                 return (<Product
                                     id={item.id}
                                     brand={item.brand}
-                                    price={`${item.price} p.`}
+                                    price={item.price}
                                     name={item.product}
                                     key={item.id}/>)
                             })}

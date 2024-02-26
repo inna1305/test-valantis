@@ -6,12 +6,10 @@ interface IProductProps {
     brand: string | null,
     price: number,
     name: string,
-    isLoading: boolean
 }
 
 const Product = (props: IProductProps): ReactElement => {
     return (
-
             <Card
                 style={{
                     width: 230,
@@ -22,7 +20,6 @@ const Product = (props: IProductProps): ReactElement => {
                 <p>{props.brand}</p>
                 <p style={{fontSize: '9px'}}>{props.id}</p>
             </Card>
-
     );
 }
 
