@@ -1,3 +1,5 @@
+import {FilterType, IFilterValue} from '../../types.ts';
+
 export const validatePrice = (input: string) => {
     if (typeof input !== 'string') {
         return false;
@@ -8,4 +10,11 @@ export const validatePrice = (input: string) => {
     const isInRange = !isNaN(number) && number > 0 && number <= 10000000;
 
     return isNumeric && isInRange;
+}
+
+export const getDataForRequest = (type: FilterType, data: string | number): IFilterValue => {
+    return {
+        filter: type,
+        value: data
+    };
 }

@@ -13,6 +13,7 @@ const PRODUCTS_PER_PAGE = 50;
 
 const getAuthKey = () => {
     const stamp = getTimestamp();
+    console.log(md5(`${PASSWORD}_${stamp}`));
     return md5(`${PASSWORD}_${stamp}`);
 }
 
@@ -21,29 +22,40 @@ const headers = {
     'Content-Type': 'application/json'
 };
 
-export const getIds = (page: number): Promise<IResponseIds[]> => {
+export const getIds = (page: number, filterObj: IFilterValue | null): Promise<IResponseIds[]> => {
     const currentOffset = page * PRODUCTS_PER_PAGE;
-    const data = {
-        action: 'get_ids',
-        'params': {'offset': currentOffset, 'limit': PRODUCTS_PER_PAGE + 1}
+    let data;
+    if (filterObj) {
+        data = getReqBodyToFilteredIds(filterObj);
+    } else {
+        data = getReqBodyToIds(currentOffset, PRODUCTS_PER_PAGE);
     }
+    console.log(data);
+
     const result: Promise<IResponseIds[]> = axios.post(URL, data, {headers});
     return result;
+}
+
+const getReqBodyToIds = (offset: number, limit: number) => {
+    const data = {
+        'action': 'get_ids',
+        'params': {'offset': offset, 'limit': limit + 1}
+    }
+    return data;
+}
+
+const getReqBodyToFilteredIds = (filterData: IFilterValue) => {
+    const filterValue = Number(filterData.value)
+    const data = {
+        'action': 'filter',
+        'params': { [filterData.filter]: filterValue }    }
+    return data;
 }
 
 export const getProducts = (ids: string[]): Promise<IResponseItems[]> => {
     const data = {
         action: 'get_items',
         'params': {'ids': ids}
-    }
-    const result: Promise<IResponseItems[]> = axios.post(URL, data, {headers});
-    return result;
-}
-
-export const getProductsByFilter = (filter: IFilterValue) => {
-    const data = {
-        'action': 'filter',
-        'params': {[filter.filter]: filter.value}
     }
     const result: Promise<IResponseItems[]> = axios.post(URL, data, {headers});
     return result;
