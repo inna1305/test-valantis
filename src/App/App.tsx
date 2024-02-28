@@ -5,7 +5,6 @@ import Product from '../components/Product.tsx';
 import Filters from '../components/Filters/Filters.tsx';
 import Pagination from '../components/Pagination.tsx';
 import {IFilterValue, IItem} from '../types.ts';
-
 const {Sider, Content, Footer} = Layout;
 
 interface FilterContextValue {
@@ -16,10 +15,8 @@ interface FilterContextValue {
 export const FilterContext = createContext<FilterContextValue | null>(null)
 const App = (): ReactElement => {
     const [currentPage, setCurrentPage] = useState(1);
-    //const [ids, setIds] = useState<string[]>([]);
     const [items, setItems] = useState<IItem[]>([]);
     const [nextIsDisabled, setNextIsDisabled] = useState(false);
-    //создать контекст и стейт для контекста и сеттером менять значение есть ли фильтр сейчас
     const [currentFilter, setCurrentFilter] = useState<IFilterValue | null>(null);
 
     useEffect(() => {
@@ -95,8 +92,7 @@ const App = (): ReactElement => {
                 </Layout>
             </FilterContext.Provider>
         </Layout>
-    )
-        ;
+    );
 };
 
 export default App

@@ -12,9 +12,14 @@ export const validatePrice = (input: string) => {
     return isNumeric && isInRange;
 }
 
-export const getDataForRequest = (type: FilterType, data: string | number): IFilterValue => {
+export const getDataForRequest = (type: FilterType, data: string): IFilterValue => {
+    let currentData: string | number = data;
+    if (type === FilterType.price) {
+        currentData = Number(data);
+    }
     return {
         filter: type,
-        value: data
+        value: currentData
     };
 }
+

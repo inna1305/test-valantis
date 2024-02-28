@@ -13,7 +13,6 @@ const PRODUCTS_PER_PAGE = 50;
 
 const getAuthKey = () => {
     const stamp = getTimestamp();
-    console.log(md5(`${PASSWORD}_${stamp}`));
     return md5(`${PASSWORD}_${stamp}`);
 }
 
@@ -30,7 +29,6 @@ export const getIds = (page: number, filterObj: IFilterValue | null): Promise<IR
     } else {
         data = getReqBodyToIds(currentOffset, PRODUCTS_PER_PAGE);
     }
-    console.log(data);
 
     const result: Promise<IResponseIds[]> = axios.post(URL, data, {headers});
     return result;
@@ -45,10 +43,10 @@ const getReqBodyToIds = (offset: number, limit: number) => {
 }
 
 const getReqBodyToFilteredIds = (filterData: IFilterValue) => {
-    const filterValue = Number(filterData.value)
     const data = {
         'action': 'filter',
-        'params': { [filterData.filter]: filterValue }    }
+        'params': {[filterData.filter]: filterData.value}
+    }
     return data;
 }
 

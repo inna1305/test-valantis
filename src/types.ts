@@ -11,7 +11,7 @@ export interface IResponseItems {
 
 export interface IFilterValue {
     filter: FilterType,
-    value: string
+    value: string | number
 }
 
 export enum FilterType {
