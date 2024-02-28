@@ -1,11 +1,8 @@
 import {md5} from 'js-md5';
-import axios from 'axios';
-import {IFilterValue, IResponseItems} from '../types.ts';
+import axios, {AxiosResponse} from 'axios';
+import {IFilterValue} from '../types.ts';
 import getTimestamp from '../helpers/getTimestamp.ts';
 
-interface IResponseIds {
-    result: string[];
-}
 
 const URL = 'http://api.valantis.store:40000/';
 const PASSWORD = 'Valantis';
@@ -21,7 +18,8 @@ const headers = {
     'Content-Type': 'application/json'
 };
 
-export const getIds = (page: number, filterObj: IFilterValue | null): Promise<IResponseIds[]> => {
+
+export const getIds = (page: number, filterObj: IFilterValue | null): Promise<AxiosResponse> => {
     const currentOffset = page * PRODUCTS_PER_PAGE;
     let data;
     if (filterObj) {
@@ -30,7 +28,7 @@ export const getIds = (page: number, filterObj: IFilterValue | null): Promise<IR
         data = getReqBodyToIds(currentOffset, PRODUCTS_PER_PAGE);
     }
 
-    const result: Promise<IResponseIds[]> = axios.post(URL, data, {headers});
+    const result: Promise<AxiosResponse> = axios.post(URL, data, {headers});
     return result;
 }
 
@@ -50,11 +48,11 @@ const getReqBodyToFilteredIds = (filterData: IFilterValue) => {
     return data;
 }
 
-export const getProducts = (ids: string[]): Promise<IResponseItems[]> => {
+export const getProducts = (ids: string[]): Promise<AxiosResponse> => {
     const data = {
         action: 'get_items',
         'params': {'ids': ids}
     }
-    const result: Promise<IResponseItems[]> = axios.post(URL, data, {headers});
+    const result = axios.post(URL, data, {headers});
     return result;
 }
