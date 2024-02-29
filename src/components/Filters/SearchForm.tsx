@@ -31,6 +31,7 @@ const Input: React.FC<InputProps> = ({title, type}) => {
             }
             const res = getDataForRequest(type, value);
             setError('');
+
             if(context) {
                 context.setValue(res);
             }

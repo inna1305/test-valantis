@@ -1,10 +1,9 @@
-import {Layout, Flex, Spin} from 'antd';
-import {createContext, Dispatch, ReactElement, SetStateAction,useEffect, useState} from 'react';
+import {Layout, Spin} from 'antd';
+import {createContext, Dispatch, ReactElement, SetStateAction, useEffect, useState} from 'react';
 import {getIds, getProducts} from '../functions/requests.ts';
-import Product from '../components/Product.tsx';
 import Filters from '../components/Filters/Filters.tsx';
-import Pagination from '../components/Pagination.tsx';
 import {IFilterValue, IItem} from '../types.ts';
+import Products from '../components/Products.tsx';
 const {Sider, Content, Footer} = Layout;
 
 interface FilterContextValue {
@@ -12,12 +11,15 @@ interface FilterContextValue {
     setValue: Dispatch<SetStateAction<IFilterValue | null>>
 }
 
+
 export const FilterContext = createContext<FilterContextValue | null>(null)
 const App = (): ReactElement => {
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [ids, setIds] = useState<string[] | null>(null);
     const [items, setItems] = useState<IItem[]>([]);
     const [nextIsDisabled, setNextIsDisabled] = useState(false);
     const [currentFilter, setCurrentFilter] = useState<IFilterValue | null>(null);
+    //const [isPending, startTransition] = useTransition();
 
     useEffect(() => {
         getIds(currentPage, currentFilter)
@@ -27,16 +29,35 @@ const App = (): ReactElement => {
                     setNextIsDisabled(true);
                 }
                 const uniqIds: string[] = Array.from(new Set(arrIds));
-                //setIds(uniqIds);
+                setIds(uniqIds);
                 return uniqIds;
             })
             .then(ids => getProducts(ids))
             .then(resp => {
-                const items = resp.data.result;
-                setItems(items);
+                setItems(resp.data.result);
             });
     }, [currentPage, currentFilter]);
 
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             const resp = await getIds(currentPage, currentFilter);
+    //             const arrIds = resp.data.result;
+    //             if (arrIds.length <= 50) {
+    //                 setNextIsDisabled(true);
+    //             }
+    //             const uniqIds: string[] = Array.from(new Set(arrIds));
+    //             setIds(uniqIds);
+    //
+    //             const productsResp = await getProducts(uniqIds);
+    //             setItems(productsResp.data.result);
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
+    //     };
+    //
+    //     fetchData();
+    //}, [currentPage, currentFilter]);
 
     return (
         <Layout hasSider>
@@ -59,26 +80,15 @@ const App = (): ReactElement => {
                             background: 'light',
                             borderRadius: '10px',
                         }}
-                    >{items.length === 0 ?
-                        <Spin tip="Загрузка..." size="large" style={{marginTop: '20%'}}>
-                            <div className="content"/>
-                        </Spin> :
-                        <>
-                            <Flex wrap="wrap" gap="20px" style={{marginBottom: '30px'}}>
-                                {items.map(item => {
-                                    return (<Product
-                                        id={item.id}
-                                        brand={item.brand}
-                                        price={item.price}
-                                        name={item.product}
-                                        key={item.id}/>)
-                                })}
-                            </Flex>
-                            <Pagination
-                                currentPage={currentPage}
-                                setCurrentPage={setCurrentPage}
-                                nextIsDisabled={nextIsDisabled}/>
-                        </>}
+                    >{ids?.length === 0 ? <p>Продукты не найдены</p>
+                        // <Spin tip="Загрузка..." size="large" style={{marginTop: '20%'}}>
+                        //     <div className="content"/>
+                        // </Spin> :
+                        : <Products currentPage={currentPage}
+                                    setCurrentPage={setCurrentPage}
+                                    nextButtonState={nextIsDisabled}
+                                    items={items} />
+                        }
                     </Content>}
                     <Footer
                         style={{
