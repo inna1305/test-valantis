@@ -6,10 +6,10 @@ import {ReducerContext} from '../App/App.tsx';
 
 const Products = (): ReactElement => {
     const reducerContext = useContext(ReducerContext);
-
     return (<>
         <Flex wrap="wrap" gap="20px" style={{marginBottom: '30px'}}>
-            {reducerContext?.value.items.map(item => {
+
+            {reducerContext?.value.items.length === 0 ? <p>Продукты не найдены</p> : reducerContext?.value.items.map(item => {
                 return (<Product
                     id={item.id}
                     brand={item.brand}
