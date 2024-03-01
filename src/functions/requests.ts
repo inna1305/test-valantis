@@ -28,8 +28,8 @@ export const getIds = async (page: number): Promise<string[]> => {
 
 export const fetchData = async (currentPage: number): Promise<IItem[]> => {
     try {
-        const ids = await getIds(currentPage);
-        const items = await getItems(ids);
+        const ids = await retryOnError(() => getIds(currentPage));
+        const items = await retryOnError(() => getItems(ids));
         return items;
     } catch (error) {
         console.error(error);
@@ -37,16 +37,16 @@ export const fetchData = async (currentPage: number): Promise<IItem[]> => {
     }
 }
 
-// const retryOnError = async (fn: () => Promise<any>, retries = 3): Promise<any> => {
-//     for (let i = 0; i < retries; i++) {
-//         try {
-//             return await fn();
-//         } catch (error) {
-//             console.error(`Attempt ${i + 1} failed. Retrying...`);
-//         }
-//     }
-//     throw new Error('All attempts failed');
-// }
+const retryOnError = async (fn: () => Promise<any>, retries = 3): Promise<any> => {
+    for (let i = 0; i < retries; i++) {
+        try {
+            return await fn();
+        } catch (error) {
+            console.error(`Attempt ${i + 1} failed. Retrying...`);
+        }
+    }
+    throw new Error('All attempts failed');
+}
 
 
 // export const getIds = async (page: number, filterObj: IFilterValue | null): Promise<string[]> => {
