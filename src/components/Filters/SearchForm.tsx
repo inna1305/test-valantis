@@ -3,7 +3,7 @@ import React, {ReactNode, useContext, useState} from 'react';
 import Search from 'antd/lib/input/Search';
 import {FilterType} from '../../types.ts';
 import {getDataForRequest, validatePrice} from './helpers.ts';
-import {FilterContext} from '../../App/App.tsx';
+import {ReducerContext} from '../../App/App.tsx';
 
 interface SearchFormProps {
     children: ReactNode
@@ -16,7 +16,7 @@ interface InputProps {
 
 const Input: React.FC<InputProps> = ({title, type}) => {
         const [error, setError] = useState('');
-        const context = useContext(FilterContext);
+        const context = useContext(ReducerContext);
 
         const handleSubmit = (value: string) => {
             if (value.length === 0) {
@@ -32,9 +32,9 @@ const Input: React.FC<InputProps> = ({title, type}) => {
             const res = getDataForRequest(type, value);
             setError('');
 
-            if(context) {
-                context.setValue(res);
-            }
+            // if(context) {
+            //     context.setValue(res);
+            // }
         }
 
         return (

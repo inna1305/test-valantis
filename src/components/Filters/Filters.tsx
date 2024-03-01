@@ -2,15 +2,14 @@ import {memo, ReactElement, useContext} from 'react';
 import {Button, Flex} from 'antd';
 import {FilterType} from '../../types.ts';
 import SearchForm from './SearchForm.tsx';
-import {FilterContext} from '../../App/App.tsx';
+import {ReducerContext} from '../../App/App.tsx';
+import {Action} from '../../App/reducer.ts';
 
 const Filters = memo(function (): ReactElement {
-    const filtersContext = useContext(FilterContext);
+    const reducerContext = useContext(ReducerContext);
 
     const handleReset = () => {
-        if (filtersContext && filtersContext.value) {
-            filtersContext.setValue(null);
-        }
+            reducerContext.setValue({type: Action.resetFilters});
     }
 
     return (

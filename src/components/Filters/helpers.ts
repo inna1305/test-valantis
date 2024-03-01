@@ -13,7 +13,7 @@ export const getDataForRequest = (type: FilterType, data: string): IFilterValue 
         currentData = Number(data);
     }
     return {
-        filter: type,
+        filterType: type,
         value: currentData
     };
 }

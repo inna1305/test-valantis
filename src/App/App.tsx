@@ -1,67 +1,37 @@
-import {Layout, Spin} from 'antd';
-import {createContext, Dispatch, ReactElement, SetStateAction, useEffect, useState} from 'react';
-import {getIds, getProducts} from '../functions/requests.ts';
+import {Layout} from 'antd';
+import {createContext, Dispatch, ReactElement, useEffect, useReducer} from 'react';
 import Filters from '../components/Filters/Filters.tsx';
-import {IFilterValue, IItem} from '../types.ts';
 import Products from '../components/Products.tsx';
+import {Action, initialState, IReducerAction, IReducerState, reducer} from './reducer.ts';
+import {fetchData} from '../functions/requests.ts';
+
 const {Sider, Content, Footer} = Layout;
 
-interface FilterContextValue {
-    value: IFilterValue | null,
-    setValue: Dispatch<SetStateAction<IFilterValue | null>>
+interface IReducerContextValue {
+    value: IReducerState,
+    setValue: Dispatch<IReducerAction>
 }
 
 
-export const FilterContext = createContext<FilterContextValue | null>(null)
+export const ReducerContext = createContext<IReducerContextValue | null>(null);
 const App = (): ReactElement => {
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const [ids, setIds] = useState<string[] | null>(null);
-    const [items, setItems] = useState<IItem[]>([]);
-    const [nextIsDisabled, setNextIsDisabled] = useState(false);
-    const [currentFilter, setCurrentFilter] = useState<IFilterValue | null>(null);
+    const [state, dispatch] = useReducer(reducer, initialState);
+    //const [items, setItems] = useState<IItem[]>();
     //const [isPending, startTransition] = useTransition();
 
     useEffect(() => {
-        getIds(currentPage, currentFilter)
-            .then(resp => {
-                const arrIds = resp.data.result;
-                if (arrIds.length <= 50) {
-                    setNextIsDisabled(true);
-                }
-                const uniqIds: string[] = Array.from(new Set(arrIds));
-                setIds(uniqIds);
-                return uniqIds;
-            })
-            .then(ids => getProducts(ids))
-            .then(resp => {
-                setItems(resp.data.result);
-            });
-    }, [currentPage, currentFilter]);
+        fetchData(1).then((items) => {
+            //setItems(items);
+            return items;
+        }).then((items) => {
+            dispatch({type: Action.getItems, items: items, nextButtonIsActive: items.length === 51});
+        });
+    }, []);
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             const resp = await getIds(currentPage, currentFilter);
-    //             const arrIds = resp.data.result;
-    //             if (arrIds.length <= 50) {
-    //                 setNextIsDisabled(true);
-    //             }
-    //             const uniqIds: string[] = Array.from(new Set(arrIds));
-    //             setIds(uniqIds);
-    //
-    //             const productsResp = await getProducts(uniqIds);
-    //             setItems(productsResp.data.result);
-    //         } catch (error) {
-    //             console.error(error);
-    //         }
-    //     };
-    //
-    //     fetchData();
-    //}, [currentPage, currentFilter]);
 
     return (
         <Layout hasSider>
-            <FilterContext.Provider value={{value: currentFilter, setValue: setCurrentFilter}}>
+            <ReducerContext.Provider value={{value: state, setValue: dispatch}}>
                 <Sider
                     width="360"
                     style={{
@@ -79,16 +49,12 @@ const App = (): ReactElement => {
                             minHeight: 280,
                             background: 'light',
                             borderRadius: '10px',
-                        }}
-                    >{ids?.length === 0 ? <p>Продукты не найдены</p>
-                        // <Spin tip="Загрузка..." size="large" style={{marginTop: '20%'}}>
-                        //     <div className="content"/>
-                        // </Spin> :
-                        : <Products currentPage={currentPage}
-                                    setCurrentPage={setCurrentPage}
-                                    nextButtonState={nextIsDisabled}
-                                    items={items} />
-                        }
+                        }}>
+                    {/*>{state.items.length === 0 ? <p>Продукты не найдены</p>*/}
+                    {/*    // <Spin tip="Загрузка..." size="large" style={{marginTop: '20%'}}>*/}
+                    {/*    //     <div className="content"/>*/}
+                    {/*    // </Spin> :*/}
+                        <Products/>
                     </Content>}
                     <Footer
                         style={{
@@ -100,7 +66,7 @@ const App = (): ReactElement => {
                         Turova Inna {new Date().getFullYear()} <a href="https://github.com/inna1305">GitHub</a>
                     </Footer>
                 </Layout>
-            </FilterContext.Provider>
+            </ReducerContext.Provider>
         </Layout>
     );
 };

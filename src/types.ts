@@ -1,5 +1,5 @@
 export interface IFilterValue {
-    filter: FilterType,
+    filterType: FilterType,
     value: string | number
 }
 

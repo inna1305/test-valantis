@@ -1,26 +1,25 @@
-import {Dispatch, memo, ReactElement, SetStateAction, useEffect} from 'react';
+import {memo, ReactElement, useContext} from 'react';
 import {Button, Flex} from 'antd';
 import {LeftOutlined, RightOutlined} from '@ant-design/icons';
+import {ReducerContext} from '../App/App.tsx';
+import {Action} from '../App/reducer.ts';
+import {PRODUCTS_PER_PAGE} from '../functions/requests.ts';
 
-interface IPaginationProps {
-    currentPage: number,
-    setCurrentPage: Dispatch<SetStateAction<number>>,
-    nextIsDisabled: boolean
-}
-const Pagination = memo ((props: IPaginationProps): ReactElement =>  {
-    useEffect(() => {
-        console.log('pagination was updated');
-    }, );
-    return (<Flex justify="center" gap="20px">
-        <Button disabled={props.currentPage === 1} icon={<LeftOutlined/>} onClick={() => {
-            if (props.currentPage > 1) {
-                props.setCurrentPage(props.currentPage - 1);
-            }
+const Pagination = memo ((): ReactElement =>  {
+    const reducerContext = useContext(ReducerContext);
+    const currentPage = reducerContext?.value.currentPage;
+    const handleButtonPrev = () => {
+        if (currentPage && currentPage > 1) {
+            reducerContext?.setValue({type: Action.stepBack, items: []})
         }
-        }></Button>
-        <Button disabled={props.nextIsDisabled} icon={<RightOutlined/>} onClick={() => {
-            props.setCurrentPage(props.currentPage + 1)
-        }}></Button>
+    }
+    const handleButtonNext = () => {
+        reducerContext?.setValue({type: Action.stepBack, items: []});
+    }
+
+    return (<Flex justify="center" gap="20px">
+        <Button disabled={reducerContext.value.currentPage === 1} icon={<LeftOutlined/>} onClick={handleButtonPrev}></Button>
+        <Button disabled={reducerContext.value.items.length <= PRODUCTS_PER_PAGE} icon={<RightOutlined/>} onClick={handleButtonNext}></Button>
     </Flex>);
 });
 export default Pagination;
