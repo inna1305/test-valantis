@@ -19,10 +19,8 @@ const headers = {
 };
 
 export const getIds = async (page: number): Promise<string[]> => {
-    const currentOffset = page * PRODUCTS_PER_PAGE;
-    const body = getReqBodyToIds(currentOffset, PRODUCTS_PER_PAGE);
+    const body = getReqBodyToIds(page, PRODUCTS_PER_PAGE);
     const result = await axios.post(URL, body, {headers});
-    //const uniqIds: string[] = Array.from(new Set(result.data));
     return result.data.result;
 }
 
@@ -65,7 +63,7 @@ const retryOnError = async (fn: () => Promise<any>, retries = 3): Promise<any> =
 const getReqBodyToIds = (offset: number, limit: number) => {
     const data = {
         'action': 'get_ids',
-        'params': {'offset': offset, 'limit': limit + 1}
+        'params': {'offset': offset, 'limit': limit}
     }
     return data;
 }

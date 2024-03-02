@@ -16,7 +16,7 @@ export interface IReducerAction {
 }
 
 export enum Action {
-    getItems = 'get_items',
+    setItems = 'set_items',
     stepForward = 'step_forward',
     stepBack = 'step_back',
     setFilter = 'set_filter',
@@ -25,22 +25,14 @@ export enum Action {
 
 export const initialState: IReducerState = {items: [], filter: null, nextButtonIsActive: false, currentPage: 1};
 
-
-
-
-// export const getData = (currentPage: number): Promise<IItem[]> => {
-//     getIds(currentPage).then(ids => {
-//         return getItems(ids)});
-// }
-
 export function reducer(state: IReducerState, action: IReducerAction): IReducerState {
     switch (action.type) {
-        case Action.getItems: {
+        case Action.setItems: {
             return {
                 ...state,
                 filter: null,
                 items: action.items!,
-                currentPage: 1,
+                currentPage: action.currentPage!,
                 nextButtonIsActive: action.nextButtonIsActive!
             }
         }
@@ -78,6 +70,7 @@ export function reducer(state: IReducerState, action: IReducerAction): IReducerS
             };
         }
         case Action.stepBack: {
+            //обработать currentPage === 1
             const newItems = [...state.items];
             return {
                 ...state,

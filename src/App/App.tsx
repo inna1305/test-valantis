@@ -1,7 +1,7 @@
 import {Layout, Spin} from 'antd';
 import {createContext, Dispatch, ReactElement, useEffect, useReducer, useState} from 'react';
 import Filters from '../components/Filters/Filters.tsx';
-import Products from '../components/Products.tsx';
+import Products from '../components/Products/Products.tsx';
 import {Action, initialState, IReducerAction, IReducerState, reducer} from './reducer.ts';
 import {fetchData} from '../functions/requests.ts';
 
@@ -19,11 +19,20 @@ const App = (): ReactElement => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        // const data = getFakeData(1, 50);
+        //     dispatch({
+        //         type: Action.setItems,
+        //         items: data,
+        //         nextButtonIsActive: data.length === 51,
+        //         currentPage: 1
+        //     });
+        //     setIsLoading(false);
         fetchData(1).then((items) => {
             dispatch({
-                type: Action.getItems,
+                type: Action.setItems,
                 items: items,
-                nextButtonIsActive: items.length === 51
+                nextButtonIsActive: items.length === 51,
+                currentPage: 1
             });
         }).then(() => setIsLoading(false));
     }, []);

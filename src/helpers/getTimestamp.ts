@@ -3,7 +3,6 @@ const getDate = () => {
     const offsetMinutes = currentDate.getTimezoneOffset();
     const offsetHours = offsetMinutes / 60;
     const utcDate = new Date(currentDate.getTime() + (offsetHours * 60 * 60 * 1000));
-    console.log(utcDate);
     return utcDate;
 }
 
