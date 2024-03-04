@@ -17,6 +17,7 @@ const Filters = memo(function (): ReactElement {
                 type: Action.setItems,
                 items: items,
                 nextButtonIsActive: items.length === PRODUCTS_PER_PAGE,
+                currentPage: 1
             });
         })
             .then(() => setIsLoading(false));

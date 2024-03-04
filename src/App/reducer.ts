@@ -9,9 +9,9 @@ export interface IReducerState {
 
 export interface IReducerAction {
     type: Action;
-    items?: IItem[],
-    currentPage?: number;
-    nextButtonIsActive?: boolean,
+    items: IItem[],
+    currentPage: number;
+    nextButtonIsActive: boolean,
     filter?: IFilterValue | null
 }
 
@@ -29,31 +29,31 @@ export function reducer(state: IReducerState, action: IReducerAction): IReducerS
             return {
                 ...state,
                 filter: null,
-                items: action.items!,
-                currentPage: action.currentPage!,
-                nextButtonIsActive: action.nextButtonIsActive!
+                items: action.items,
+                currentPage: action.currentPage,
+                nextButtonIsActive: action.nextButtonIsActive
             }
         }
         case Action.setItemsByFilter: {
             const newFilter: IFilterValue = {
-                filterType: action.filter!.filterType!,
+                filterType: action.filter!.filterType,
                 value: action.filter!.value
             }
             return {
                 ...state,
                 filter: newFilter,
-                items: action.items!,
-                currentPage: 1,
-                nextButtonIsActive: action.nextButtonIsActive!
+                items: action.items,
+                currentPage: action.currentPage,
+                nextButtonIsActive: action.nextButtonIsActive
             }
         }
         case Action.resetFilters: {
             return {
                 ...state,
-                items: action.items!,
+                items: action.items,
                 filter: null,
-                currentPage: 1,
-                nextButtonIsActive: action.nextButtonIsActive!
+                currentPage: action.currentPage,
+                nextButtonIsActive: action.nextButtonIsActive
             }
         }
     }

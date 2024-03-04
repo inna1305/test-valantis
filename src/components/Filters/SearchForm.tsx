@@ -4,7 +4,7 @@ import Search from 'antd/lib/input/Search';
 import {FilterType} from '../../types.ts';
 import {getDataForRequest, validateData} from './helpers.ts';
 import {ReducerContext} from '../../App/App.tsx';
-import {fetchData, PRODUCTS_PER_PAGE} from '../../functions/requests.ts';
+import {fetchData} from '../../functions/requests.ts';
 import {Action} from '../../App/reducer.ts';
 
 interface SearchFormProps {
@@ -31,7 +31,8 @@ const Input: React.FC<InputProps> = ({title, type}) => {
                     filter: filterValue,
                     type: Action.setItemsByFilter,
                     items: items,
-                    nextButtonIsActive: items.length === PRODUCTS_PER_PAGE,
+                    nextButtonIsActive: false,
+                    currentPage: 1
                 });
             })
         }

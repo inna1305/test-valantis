@@ -12,8 +12,12 @@ interface IReducerContextValue {
     setValue: Dispatch<IReducerAction>
 }
 
+const initContextValue: IReducerContextValue = {
+    value: initialState,
+    setValue: () => {}
+}
 
-export const ReducerContext = createContext<IReducerContextValue | null>(null);
+export const ReducerContext = createContext<IReducerContextValue>(initContextValue);
 const App = (): ReactElement => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const [isLoading, setIsLoading] = useState(true);
