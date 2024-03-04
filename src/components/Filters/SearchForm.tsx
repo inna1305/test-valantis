@@ -34,7 +34,6 @@ const Input: React.FC<InputProps> = ({title, type}) => {
                     nextButtonIsActive: items.length === PRODUCTS_PER_PAGE,
                 });
             })
-                //.then(() => setIsLoading(false));
         }
 
         return (

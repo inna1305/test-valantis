@@ -1,15 +1,25 @@
-import {memo, ReactElement, useContext} from 'react';
+import {memo, ReactElement, useContext, useState} from 'react';
 import {Button, Flex} from 'antd';
 import {FilterType} from '../../types.ts';
 import SearchForm from './SearchForm.tsx';
 import {ReducerContext} from '../../App/App.tsx';
 import {Action} from '../../App/reducer.ts';
+import {fetchData, PRODUCTS_PER_PAGE} from '../../functions/requests.ts';
 
 const Filters = memo(function (): ReactElement {
-    const reducerContext = useContext(ReducerContext);
+    const context = useContext(ReducerContext);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleReset = () => {
-            reducerContext!.setValue({type: Action.resetFilters});
+        setIsLoading(true);
+        fetchData(1, null).then((items) => {
+            context!.setValue({
+                type: Action.setItems,
+                items: items,
+                nextButtonIsActive: items.length === PRODUCTS_PER_PAGE,
+            });
+        })
+            .then(() => setIsLoading(false));
     }
 
     return (
@@ -31,7 +41,7 @@ const Filters = memo(function (): ReactElement {
                     type={FilterType.brand}
                 />
             </SearchForm>
-            <Button onClick={handleReset}
+            <Button disabled={isLoading} onClick={handleReset}
                     style={{
                         marginTop: '10%',
                         width: '100%'
