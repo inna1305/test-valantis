@@ -28,10 +28,14 @@ const Pagination = memo((): ReactElement => {
         return !(context.value.nextButtonIsActive) || context.value.filter !== null || isLoading;
     }
 
+    const isPrevDisabled = (): boolean => {
+        return context.value.currentPage === 1 || isLoading;
+    }
+
     const currentPage = context.value.currentPage;
     return (
         <Flex justify="center" gap="20px">
-            <Button disabled={context.value.currentPage === 1} icon={<LeftOutlined/>}
+            <Button disabled={isPrevDisabled()} icon={<LeftOutlined/>}
                     onClick={() => handleButton(currentPage - 1)}></Button>
             <Button disabled={isNextDisabled()} icon={<RightOutlined/>}
                     onClick={() => handleButton(currentPage + 1)}></Button>
