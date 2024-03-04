@@ -29,8 +29,7 @@ export const getIds = async (page: number, filterObj: IFilterValue | null): Prom
     }
 
     const result = await axios.post(URL, body, {headers});
-    return result.data.result;
-}
+    return result.data.result.slice(0, PRODUCTS_PER_PAGE);}
 
 export const getItems = async (ids: string[]): Promise<IItem[]> => {
     const data = {
