@@ -27,7 +27,7 @@ const Input: React.FC<InputProps> = ({title, type}) => {
             const filterValue = getDataForRequest(type, value);
 
             fetchData(1, filterValue).then((items) => {
-                context!.setValue({
+                context.setValue({
                     filter: filterValue,
                     type: Action.setItemsByFilter,
                     items: items,

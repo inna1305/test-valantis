@@ -11,9 +11,9 @@ const Pagination = memo((): ReactElement => {
 
     const handleButton = (newPageNumber: number) => {
         setIsLoading(true);
-        const filter = context?.value.filter;
-        fetchData(newPageNumber, filter!).then((items) => {
-            context!.setValue({
+        const filter = context.value.filter;
+        fetchData(newPageNumber, filter).then((items) => {
+            context.setValue({
                 type: Action.setItems,
                 items: items,
                 nextButtonIsActive: items.length === PRODUCTS_PER_PAGE,
@@ -24,17 +24,17 @@ const Pagination = memo((): ReactElement => {
     }
 
     const isNextDisabled = (): boolean => {
-        //context?.value.filter !== null - stub (there is no pagination on the server for filtered products)
-        return !(context?.value.nextButtonIsActive) || context?.value.filter !== null || isLoading;
+        //context.value.filter !== null - stub (there is no pagination on the server for filtered products)
+        return !(context.value.nextButtonIsActive) || context.value.filter !== null || isLoading;
     }
 
-    const currentPage = context?.value.currentPage;
+    const currentPage = context.value.currentPage;
     return (
         <Flex justify="center" gap="20px">
-            <Button disabled={context?.value.currentPage === 1} icon={<LeftOutlined/>}
-                    onClick={()=> handleButton(currentPage!-1)}></Button>
+            <Button disabled={context.value.currentPage === 1} icon={<LeftOutlined/>}
+                    onClick={() => handleButton(currentPage - 1)}></Button>
             <Button disabled={isNextDisabled()} icon={<RightOutlined/>}
-                    onClick={()=> handleButton(currentPage!+1)}></Button>
+                    onClick={() => handleButton(currentPage + 1)}></Button>
         </Flex>);
 });
 export default Pagination;

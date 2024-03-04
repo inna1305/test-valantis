@@ -9,13 +9,13 @@ import {IItem} from '../../types.ts';
 const Products = (): ReactElement => {
     const reducerContext = useContext(ReducerContext);
     let items: IItem[] = [];
-    if (reducerContext!.value.items.length > 0) {
-        items = getUniqueItems(reducerContext!.value.items);
+    if (reducerContext.value.items.length > 0) {
+        items = getUniqueItems(reducerContext.value.items);
     }
 
     return (<>
         <Flex wrap="wrap" gap="20px" style={{marginBottom: '30px'}}>
-            {items.length === 0 ? <p>Продукты не найдены</p> : items?.map(item => {
+            {items.length === 0 ? <p>Продукты не найдены</p> : items.map(item => {
                 return (<Product
                     id={item.id}
                     brand={item.brand}

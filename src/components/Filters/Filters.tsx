@@ -13,7 +13,7 @@ const Filters = memo(function (): ReactElement {
     const handleReset = () => {
         setIsLoading(true);
         fetchData(1, null).then((items) => {
-            context!.setValue({
+            context.setValue({
                 type: Action.setItems,
                 items: items,
                 nextButtonIsActive: items.length === PRODUCTS_PER_PAGE,
