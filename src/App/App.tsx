@@ -29,20 +29,20 @@ const App = (): ReactElement => {
         }).then(() => setIsLoading(false));
     }, []);
 
-
     return (
         <Layout hasSider>
             <ReducerContext.Provider value={{value: state, setValue: dispatch}}>
                 <Sider
                     width="360"
                     style={{
+                        position: 'fixed',
                         background: 'white',
                         overflow: 'auto',
                         height: '100vh',
                     }}>
                     <Filters/>
                 </Sider>
-                <Layout> {
+                <Layout style={{marginLeft: 360}}> {
                     <Content
                         style={{
                             margin: '0 16px 0 0px',

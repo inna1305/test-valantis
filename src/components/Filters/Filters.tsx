@@ -45,7 +45,7 @@ const Filters = memo(function (): ReactElement {
                     style={{
                         marginTop: '10%',
                         width: '100%'
-                    }}>Сбросить фильтр
+                    }}>Сбросить текущий фильтр
             </Button>
         </Flex>);
 });
