@@ -34,7 +34,7 @@ const App = (): ReactElement => {
     }, []);
 
     return (
-        <Layout hasSider>
+        <Layout hasSider style={{minHeight: '100vh'}}>
             <ReducerContext.Provider value={{value: state, setValue: dispatch}}>
                 <Sider
                     width="360"
