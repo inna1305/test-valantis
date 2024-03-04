@@ -18,3 +18,15 @@ export const getDataForRequest = (type: FilterType, data: string): IFilterValue 
     };
 }
 
+export const validateData = (typeOfData: FilterType, value: string): string => {
+    if (value.length === 0) {
+        return 'Пожалуйста, введите значение';
+    }
+    if (typeOfData === FilterType.price) {
+        if (!validatePrice(value)) {
+            return 'Пожалуйста, введите корректное число';
+        }
+    }
+    return '';
+}
+

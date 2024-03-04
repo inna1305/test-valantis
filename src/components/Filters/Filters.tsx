@@ -9,7 +9,7 @@ const Filters = memo(function (): ReactElement {
     const reducerContext = useContext(ReducerContext);
 
     const handleReset = () => {
-            reducerContext.setValue({type: Action.resetFilters});
+            reducerContext!.setValue({type: Action.resetFilters});
     }
 
     return (

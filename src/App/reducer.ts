@@ -17,9 +17,7 @@ export interface IReducerAction {
 
 export enum Action {
     setItems = 'set_items',
-    stepForward = 'step_forward',
-    stepBack = 'step_back',
-    setFilter = 'set_filter',
+    setItemsByFilter = 'set_filter',
     resetFilters = 'reset_filters',
 }
 
@@ -36,48 +34,27 @@ export function reducer(state: IReducerState, action: IReducerAction): IReducerS
                 nextButtonIsActive: action.nextButtonIsActive!
             }
         }
-        case Action.setFilter: {
+        case Action.setItemsByFilter: {
             const newFilter: IFilterValue = {
-                filterType: state.filter!.filterType,
-                value: state.filter!.value
+                filterType: action.filter!.filterType!,
+                value: action.filter!.value
             }
-            const newItems = [...state.items];
             return {
                 ...state,
                 filter: newFilter,
-                items: newItems,
+                items: action.items!,
                 currentPage: 1,
-                nextButtonIsActive: state.nextButtonIsActive
+                nextButtonIsActive: action.nextButtonIsActive!
             }
         }
         case Action.resetFilters: {
-            const newItems = [...state.items];
             return {
                 ...state,
-                items: newItems,
+                items: action.items!,
                 filter: null,
                 currentPage: 1,
-                nextButtonIsActive: state.nextButtonIsActive
+                nextButtonIsActive: action.nextButtonIsActive!
             }
-        }
-        case Action.stepForward: {
-            const newItems = [...state.items];
-            return {
-                ...state,
-                items: newItems,
-                currentPage: state.currentPage + 1,
-                nextButtonIsActive: state.nextButtonIsActive
-            };
-        }
-        case Action.stepBack: {
-            //обработать currentPage === 1
-            const newItems = [...state.items];
-            return {
-                ...state,
-                items: newItems,
-                currentPage: state.currentPage - 1,
-                nextButtonIsActive: state.nextButtonIsActive
-            };
         }
     }
     throw Error('Unknown action: ' + action.type);

@@ -2,8 +2,10 @@ import {Typography} from 'antd';
 import React, {ReactNode, useContext, useState} from 'react';
 import Search from 'antd/lib/input/Search';
 import {FilterType} from '../../types.ts';
-import {getDataForRequest, validatePrice} from './helpers.ts';
+import {getDataForRequest, validateData} from './helpers.ts';
 import {ReducerContext} from '../../App/App.tsx';
+import {fetchData, PRODUCTS_PER_PAGE} from '../../functions/requests.ts';
+import {Action} from '../../App/reducer.ts';
 
 interface SearchFormProps {
     children: ReactNode
@@ -19,22 +21,20 @@ const Input: React.FC<InputProps> = ({title, type}) => {
         const context = useContext(ReducerContext);
 
         const handleSubmit = (value: string) => {
-            if (value.length === 0) {
-                setError('Пожалуйста, введите значение');
-                return;
-            }
-            if (type === FilterType.price) {
-                if (!validatePrice(value)) {
-                    setError('Пожалуйста, введите корректное число');
-                    return;
-                }
-            }
-            const res = getDataForRequest(type, value);
-            setError('');
+            const errorValue = validateData(type, value);
+            setError(errorValue);
 
-            // if(context) {
-            //     context.setValue(res);
-            // }
+            const filterValue = getDataForRequest(type, value);
+
+            fetchData(1, filterValue).then((items) => {
+                context!.setValue({
+                    filter: filterValue,
+                    type: Action.setItemsByFilter,
+                    items: items,
+                    nextButtonIsActive: items.length === PRODUCTS_PER_PAGE,
+                });
+            })
+                //.then(() => setIsLoading(false));
         }
 
         return (

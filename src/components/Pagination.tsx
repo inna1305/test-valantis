@@ -20,24 +20,17 @@ const Pagination = memo((): ReactElement => {
 
     const handleButtonNext = () => {
         setIsLoading(true);
-        const newPageValue = context!.value.currentPage + 1;
-        fetchData(newPageValue).then((items) => {
+        const newCurrentPageValue = context!.value.currentPage + 1;
+        const filter = context?.value.filter;
+        fetchData(newCurrentPageValue, filter!).then((items) => {
             context!.setValue({
                 type: Action.setItems,
                 items: items,
-                nextButtonIsActive: items.length === 51,
-                currentPage: newPageValue,
+                nextButtonIsActive: items.length === PRODUCTS_PER_PAGE,
+                currentPage: newCurrentPageValue,
             });
         })
             .then(() => setIsLoading(false));
-
-        // const data = getFakeData(currentPageValue, 51);
-        // context?.setValue({
-        //     type: Action.setItems,
-        //     items: data,
-        //     nextButtonIsActive: data.length === 51,
-        //     currentPage: currentPageValue
-        // });
     }
 
     return (
