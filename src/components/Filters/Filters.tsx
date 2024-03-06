@@ -2,24 +2,28 @@ import {memo, ReactElement, useContext} from 'react';
 import {Button, Flex} from 'antd';
 import {FilterType} from '../../types.ts';
 import SearchForm from './SearchForm.tsx';
-import {Action} from '../../App/contexts/itemsContext/reducer.ts';
+import {Action} from '../../App/reducer.ts';
 import {fetchData, PRODUCTS_PER_PAGE} from '../../functions/requests.ts';
-import {IsLoadingContext, ReducerContext} from '../../App/App.tsx';
+import {LoadingContext, ReducerContext} from '../../App/App.tsx';
 
 const Filters = memo(function (): ReactElement {
-    const context = useContext(ReducerContext);
-const loadingContext = useContext(IsLoadingContext);
+    const {reducerValue, setReducerValue} = useContext(ReducerContext);
+    const {isLoading, setIsLoading} = useContext(LoadingContext);
     const handleReset = () => {
-        loadingContext.setValue(true);
-        fetchData(1, null).then((items) => {
-            context.setValue({
-                type: Action.setItems,
-                items: items,
-                nextButtonIsActive: items.length === PRODUCTS_PER_PAGE,
-                currentPage: 1
-            });
-        })
-            .then(() => loadingContext.setValue(false));
+        if (reducerValue.filter === null) {
+            return;
+        }
+        setIsLoading(true);
+        fetchData(1, null)
+            .then((items) => {
+                setReducerValue({
+                    type: Action.setItems,
+                    items: items,
+                    nextButtonIsActive: items.length === PRODUCTS_PER_PAGE,
+                    currentPage: 1
+                });
+            })
+            .then(() => setIsLoading(false));
     }
 
     return (
@@ -41,7 +45,7 @@ const loadingContext = useContext(IsLoadingContext);
                     type={FilterType.brand}
                 />
             </SearchForm>
-            <Button disabled={loadingContext.value} onClick={handleReset}
+            <Button disabled={isLoading} onClick={handleReset}
                     style={{
                         marginTop: '10%',
                         width: '100%'

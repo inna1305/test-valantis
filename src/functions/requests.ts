@@ -4,7 +4,6 @@ import {IFilterValue, IItem} from '../types.ts';
 import getTimestamp from '../helpers/getTimestamp.ts';
 import {retryOnError} from '../helpers/retryRequest.ts';
 
-
 const URL = 'http://api.valantis.store:40000/';
 const PASSWORD = 'Valantis';
 export const PRODUCTS_PER_PAGE = 50;
@@ -44,8 +43,7 @@ export const getItems = async (ids: string[]): Promise<IItem[]> => {
 export const fetchData = async (currentPage: number, filterObj: IFilterValue | null): Promise<IItem[]> => {
     try {
         const ids = await retryOnError(() => getIds(currentPage, filterObj));
-        const items = await retryOnError(() => getItems(ids));
-        return items;
+        return await retryOnError(() => getItems(ids));
     } catch (error) {
         console.error(error);
         throw error;
@@ -53,19 +51,17 @@ export const fetchData = async (currentPage: number, filterObj: IFilterValue | n
 }
 
 const getReqBodyToIds = (offset: number, limit: number) => {
-    const data = {
+    return {
         'action': 'get_ids',
         'params': {'offset': offset, 'limit': limit}
     }
-    return data;
 }
 
 const getReqBodyToFilteredIds = (filterData: IFilterValue) => {
-    const data = {
+    return {
         'action': 'filter',
         'params': {[filterData.filterType]: filterData.value}
     }
-    return data;
 }
 
 

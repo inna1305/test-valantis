@@ -1,4 +1,4 @@
-import {IFilterValue, IItem} from '../../../types.ts';
+import {IFilterValue, IItem} from '../types.ts';
 
 export interface IReducerState {
     items: IItem[];

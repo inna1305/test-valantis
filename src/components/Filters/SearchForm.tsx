@@ -3,9 +3,9 @@ import React, {ReactNode, useContext, useState} from 'react';
 import {FilterType} from '../../types.ts';
 import {getDataForRequest, validateData} from './helpers.ts';
 import {fetchData} from '../../functions/requests.ts';
-import {Action} from '../../App/contexts/itemsContext/reducer.ts';
+import {Action} from '../../App/reducer.ts';
 import {SearchOutlined} from '@ant-design/icons';
-import {IsLoadingContext, ReducerContext} from '../../App/App.tsx';
+import {LoadingContext, ReducerContext} from '../../App/App.tsx';
 
 interface SearchFormProps {
     children: ReactNode
@@ -18,39 +18,39 @@ interface InputProps {
 
 const SearchInput: React.FC<InputProps> = ({title, type}) => {
         const [error, setError] = useState('');
-        const context = useContext(ReducerContext);
-        const loadingContext = useContext(IsLoadingContext);
+        const {setReducerValue} = useContext(ReducerContext);
+        const {isLoading, setIsLoading} = useContext(LoadingContext);
         const [form] = Form.useForm();
-
 
         const handleSubmit = () => {
             const value = form.getFieldValue(type);
-
             const errorValue = validateData(type, value);
             if (errorValue.length > 0) {
                 setError(errorValue);
                 return;
             }
-            loadingContext.setValue(true);
-
+            setIsLoading(true);
             const filterValue = getDataForRequest(type, value);
-            fetchData(1, filterValue).then((items) => {
-                context.setValue({
-                    filter: filterValue,
-                    type: Action.setItemsByFilter,
-                    items: items,
-                    nextButtonIsActive: false,
-                    currentPage: 1
+
+            fetchData(1, filterValue)
+                .then((items) => {
+                    setReducerValue({
+                        filter: filterValue,
+                        type: Action.setItemsByFilter,
+                        items: items,
+                        nextButtonIsActive: false,
+                        currentPage: 1
+                    });
+                })
+                .then(() => {
+                    form.resetFields();
+                    setError('');
+                    setIsLoading(false);
                 });
-            }).then(() => {
-                form.resetFields();
-                setError('');
-                loadingContext.setValue(false);
-            });
         }
 
         return (
-            <div>
+            <>
                 <Typography.Title level={5}>{title}</Typography.Title>
                 <Form form={form} onFinish={handleSubmit} style={{position: 'relative'}}>
                     <Flex>
@@ -58,12 +58,12 @@ const SearchInput: React.FC<InputProps> = ({title, type}) => {
                             <Input allowClear style={{margin: 0}}/>
                         </Form.Item>
                         <Form.Item>
-                            <Button icon={<SearchOutlined/>} htmlType="submit" disabled={loadingContext.value}/>
+                            <Button icon={<SearchOutlined/>} htmlType="submit" disabled={isLoading}/>
                         </Form.Item>
                     </Flex>
                     {error && <p style={{color: 'red', position: 'absolute', top: '33px'}}>{error}</p>}
                 </Form>
-            </div>
+            </>
         );
     }
 ;

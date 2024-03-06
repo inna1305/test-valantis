@@ -3,51 +3,54 @@ import {createContext, Dispatch, ReactElement, useEffect, useReducer, useState} 
 import Filters from '../components/Filters/Filters.tsx';
 import Products from '../components/Products/Products.tsx';
 import {fetchData, PRODUCTS_PER_PAGE} from '../functions/requests.ts';
-import {Action, initialState, IReducerAction, IReducerState, reducer} from './contexts/itemsContext/reducer.ts';
+import {Action, initialState, IReducerAction, IReducerState, reducer} from './reducer.ts';
 
 const {Sider, Content, Footer} = Layout;
 
-export interface IIsLoadingContextValue {
-    value: boolean,
-    setValue: Dispatch<boolean>
+interface ILoadingContextValue {
+    isLoading: boolean,
+    setIsLoading: Dispatch<boolean>
 }
 
-export interface IReducerContextValue {
-    value: IReducerState,
-    setValue: Dispatch<IReducerAction>
+interface IReducerContextValue {
+    reducerValue: IReducerState,
+    setReducerValue: Dispatch<IReducerAction>
 }
 
-export const initIsLoadingValue: IIsLoadingContextValue = {
-    value: false,
-    setValue: () => {
+const initLoadingValue: ILoadingContextValue = {
+    isLoading: false,
+    setIsLoading: () => {
     }
 }
-export const initContextValue: IReducerContextValue = {
-    value: initialState,
-    setValue: () => {
+const initReducerContextValue: IReducerContextValue = {
+    reducerValue: initialState,
+    setReducerValue: () => {
     }
 }
-export const ReducerContext = createContext<IReducerContextValue>(initContextValue);
-export const IsLoadingContext = createContext(initIsLoadingValue);
+export const ReducerContext = createContext<IReducerContextValue>(initReducerContextValue);
+export const LoadingContext = createContext(initLoadingValue);
+
 const App = (): ReactElement => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {
         setIsLoading(true);
-        fetchData(1, null).then((items) => {
-            dispatch({
-                type: Action.setItems,
-                items: items,
-                nextButtonIsActive: items.length === PRODUCTS_PER_PAGE,
-                currentPage: 1
-            });
-        }).then(() => setIsLoading(false));
+        fetchData(1, null)
+            .then((items) => {
+                dispatch({
+                    type: Action.setItems,
+                    items: items,
+                    nextButtonIsActive: items.length === PRODUCTS_PER_PAGE,
+                    currentPage: 1
+                });
+            })
+            .then(() => setIsLoading(false));
     }, []);
 
     return (
         <Layout hasSider style={{minHeight: '100vh'}}>
-            <ReducerContext.Provider value={{value: state, setValue: dispatch}}>
-                <IsLoadingContext.Provider value={{value: isLoading, setValue: setIsLoading}}> <Sider
+            <ReducerContext.Provider value={{reducerValue: state, setReducerValue: dispatch}}>
+                <LoadingContext.Provider value={{isLoading: isLoading, setIsLoading: setIsLoading}}> <Sider
                     width="360"
                     style={{
                         position: 'fixed',
@@ -79,7 +82,7 @@ const App = (): ReactElement => {
                             Turova Inna {new Date().getFullYear()} <a href="https://github.com/inna1305">GitHub</a>
                         </Footer>
                     </Layout>
-                </IsLoadingContext.Provider>
+                </LoadingContext.Provider>
             </ReducerContext.Provider>
         </Layout>
     );
