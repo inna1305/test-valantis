@@ -1,4 +1,4 @@
-import {Flex} from 'antd';
+import {Flex, Space} from 'antd';
 import Product from '../Product.tsx';
 import Pagination from '../Pagination.tsx';
 import {ReactElement, useContext} from 'react';
@@ -15,7 +15,10 @@ const Products = (): ReactElement => {
 
     return (<>
         <Flex wrap="wrap" gap="20px" style={{marginBottom: '30px'}}>
-            {items.length === 0 ? <p>Продукты не найдены</p> : items.map(item => {
+            {items.length === 0 ? <Space direction="vertical">
+                <h3>Поиск: {reducerContext.value.filter?.value}</h3>
+                <p>Продукты не найдены</p>
+            </Space> : items.map(item => {
                 return (<Product
                     id={item.id}
                     brand={item.brand}

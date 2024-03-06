@@ -1,11 +1,11 @@
-import {Typography} from 'antd';
+import {Button, Flex, Form, Input, Typography} from 'antd';
 import React, {ReactNode, useContext, useState} from 'react';
-import Search from 'antd/lib/input/Search';
 import {FilterType} from '../../types.ts';
 import {getDataForRequest, validateData} from './helpers.ts';
 import {ReducerContext} from '../../App/App.tsx';
 import {fetchData} from '../../functions/requests.ts';
 import {Action} from '../../App/reducer.ts';
+import {SearchOutlined} from '@ant-design/icons';
 
 interface SearchFormProps {
     children: ReactNode
@@ -16,16 +16,24 @@ interface InputProps {
     type: FilterType;
 }
 
-const Input: React.FC<InputProps> = ({title, type}) => {
+const SearchInput: React.FC<InputProps> = ({title, type}) => {
         const [error, setError] = useState('');
         const context = useContext(ReducerContext);
+        const [form] = Form.useForm();
+        const [isLoading, setIsLoading] = useState(false);
 
-        const handleSubmit = (value: string) => {
+        const handleSubmit = () => {
+            const value = form.getFieldValue(type);
+            console.log(value);
+
             const errorValue = validateData(type, value);
-            setError(errorValue);
+            if (errorValue.length > 0) {
+                setError(errorValue);
+                return;
+            }
+            setIsLoading(true);
 
             const filterValue = getDataForRequest(type, value);
-
             fetchData(1, filterValue).then((items) => {
                 context.setValue({
                     filter: filterValue,
@@ -34,23 +42,27 @@ const Input: React.FC<InputProps> = ({title, type}) => {
                     nextButtonIsActive: false,
                     currentPage: 1
                 });
-            })
+            }).then(() => {
+                form.resetFields();
+                setError('');
+                setIsLoading(false);
+            });
         }
 
         return (
             <div>
-                <Typography.Title level={5} style={{margin: '30px 0 12px'}}>{title}</Typography.Title>
-                <Search
-                    onSearch={(value) => {
-                        handleSubmit(value);
-                    }
-                    }
-                    style={{
-                        borderColor: 'black',
-                        width: 250,
-                    }}
-                />
-                {error && <p style={{color: 'red'}}>{error}</p>}
+                <Typography.Title level={5}>{title}</Typography.Title>
+                <Form form={form} onFinish={handleSubmit} style={{position: 'relative'}}>
+                    <Flex>
+                        <Form.Item name={type} style={{margin: 0, width: 250}}>
+                            <Input allowClear style={{margin: 0}}/>
+                        </Form.Item>
+                        <Form.Item>
+                            <Button icon={<SearchOutlined/>} htmlType="submit" disabled={isLoading}/>
+                        </Form.Item>
+                    </Flex>
+                    {error && <p style={{color: 'red', position: 'absolute', top: '33px'}}>{error}</p>}
+                </Form>
             </div>
         );
     }
@@ -66,8 +78,8 @@ const SearchForm: React.FC<SearchFormProps> & { Price: React.FC<InputProps> }
     );
 };
 
-SearchForm.Price = Input;
-SearchForm.Brand = Input;
-SearchForm.Name = Input;
+SearchForm.Price = SearchInput;
+SearchForm.Brand = SearchInput;
+SearchForm.Name = SearchInput;
 
 export default SearchForm;

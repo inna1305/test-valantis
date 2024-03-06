@@ -4,7 +4,7 @@ export interface IReducerState {
     items: IItem[];
     currentPage: number;
     nextButtonIsActive: boolean,
-    filter: IFilterValue | null
+    filter: IFilterValue | null,
 }
 
 export interface IReducerAction {
@@ -12,7 +12,7 @@ export interface IReducerAction {
     items: IItem[],
     currentPage: number;
     nextButtonIsActive: boolean,
-    filter?: IFilterValue | null
+    filter?: IFilterValue | null,
 }
 
 export enum Action {
