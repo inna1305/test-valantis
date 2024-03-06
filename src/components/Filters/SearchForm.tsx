@@ -2,10 +2,10 @@ import {Button, Flex, Form, Input, Typography} from 'antd';
 import React, {ReactNode, useContext, useState} from 'react';
 import {FilterType} from '../../types.ts';
 import {getDataForRequest, validateData} from './helpers.ts';
-import {ReducerContext} from '../../App/App.tsx';
 import {fetchData} from '../../functions/requests.ts';
-import {Action} from '../../App/reducer.ts';
+import {Action} from '../../App/contexts/itemsContext/reducer.ts';
 import {SearchOutlined} from '@ant-design/icons';
+import {IsLoadingContext, ReducerContext} from '../../App/App.tsx';
 
 interface SearchFormProps {
     children: ReactNode
@@ -19,19 +19,19 @@ interface InputProps {
 const SearchInput: React.FC<InputProps> = ({title, type}) => {
         const [error, setError] = useState('');
         const context = useContext(ReducerContext);
+        const loadingContext = useContext(IsLoadingContext);
         const [form] = Form.useForm();
-        const [isLoading, setIsLoading] = useState(false);
+
 
         const handleSubmit = () => {
             const value = form.getFieldValue(type);
-            console.log(value);
 
             const errorValue = validateData(type, value);
             if (errorValue.length > 0) {
                 setError(errorValue);
                 return;
             }
-            setIsLoading(true);
+            loadingContext.setValue(true);
 
             const filterValue = getDataForRequest(type, value);
             fetchData(1, filterValue).then((items) => {
@@ -45,7 +45,7 @@ const SearchInput: React.FC<InputProps> = ({title, type}) => {
             }).then(() => {
                 form.resetFields();
                 setError('');
-                setIsLoading(false);
+                loadingContext.setValue(false);
             });
         }
 
@@ -58,7 +58,7 @@ const SearchInput: React.FC<InputProps> = ({title, type}) => {
                             <Input allowClear style={{margin: 0}}/>
                         </Form.Item>
                         <Form.Item>
-                            <Button icon={<SearchOutlined/>} htmlType="submit" disabled={isLoading}/>
+                            <Button icon={<SearchOutlined/>} htmlType="submit" disabled={loadingContext.value}/>
                         </Form.Item>
                     </Flex>
                     {error && <p style={{color: 'red', position: 'absolute', top: '33px'}}>{error}</p>}

@@ -1,17 +1,16 @@
-import {memo, ReactElement, useContext, useState} from 'react';
+import {memo, ReactElement, useContext} from 'react';
 import {Button, Flex} from 'antd';
 import {FilterType} from '../../types.ts';
 import SearchForm from './SearchForm.tsx';
-import {ReducerContext} from '../../App/App.tsx';
-import {Action} from '../../App/reducer.ts';
+import {Action} from '../../App/contexts/itemsContext/reducer.ts';
 import {fetchData, PRODUCTS_PER_PAGE} from '../../functions/requests.ts';
+import {IsLoadingContext, ReducerContext} from '../../App/App.tsx';
 
 const Filters = memo(function (): ReactElement {
     const context = useContext(ReducerContext);
-    const [isLoading, setIsLoading] = useState(false);
-
+const loadingContext = useContext(IsLoadingContext);
     const handleReset = () => {
-        setIsLoading(true);
+        loadingContext.setValue(true);
         fetchData(1, null).then((items) => {
             context.setValue({
                 type: Action.setItems,
@@ -20,7 +19,7 @@ const Filters = memo(function (): ReactElement {
                 currentPage: 1
             });
         })
-            .then(() => setIsLoading(false));
+            .then(() => loadingContext.setValue(false));
     }
 
     return (
@@ -42,7 +41,7 @@ const Filters = memo(function (): ReactElement {
                     type={FilterType.brand}
                 />
             </SearchForm>
-            <Button disabled={isLoading} onClick={handleReset}
+            <Button disabled={loadingContext.value} onClick={handleReset}
                     style={{
                         marginTop: '10%',
                         width: '100%'

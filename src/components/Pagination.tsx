@@ -1,38 +1,37 @@
-import {memo, ReactElement, useContext, useState} from 'react';
+import {memo, ReactElement, useContext} from 'react';
 import {Button, Flex} from 'antd';
 import {LeftOutlined, RightOutlined} from '@ant-design/icons';
-import {ReducerContext} from '../App/App.tsx';
-import {Action} from '../App/reducer.ts';
+import {Action} from '../App/contexts/itemsContext/reducer.ts';
 import {fetchData, PRODUCTS_PER_PAGE} from '../functions/requests.ts';
+import {IsLoadingContext, ReducerContext} from '../App/App.tsx';
 
 const Pagination = memo((): ReactElement => {
-    const context = useContext(ReducerContext);
-    const [isLoading, setIsLoading] = useState(false);
-
+    const {reducerValue, setReducerValue} = useContext(ReducerContext);
+    const loaderContext = useContext(IsLoadingContext);
     const handleButton = (newPageNumber: number) => {
-        setIsLoading(true);
-        const filter = context.value.filter;
+        loaderContext.setValue(true);
+        const filter = reducerValue.filter;
         fetchData(newPageNumber, filter).then((items) => {
-            context.setValue({
+            setReducerValue({
                 type: Action.setItems,
                 items: items,
                 nextButtonIsActive: items.length === PRODUCTS_PER_PAGE,
                 currentPage: newPageNumber,
             });
         })
-            .then(() => setIsLoading(false));
+            .then(() => loaderContext.setValue(false));
     }
 
     const isNextDisabled = (): boolean => {
         //context.value.filter !== null - stub (there is no pagination on the server for filtered products)
-        return !(context.value.nextButtonIsActive) || context.value.filter !== null || isLoading;
+        return !(reducerValue.nextButtonIsActive) || reducerValue.filter !== null || loaderContext.value;
     }
 
     const isPrevDisabled = (): boolean => {
-        return context.value.currentPage === 1 || isLoading;
+        return reducerValue.currentPage === 1 || loaderContext.value;
     }
 
-    const currentPage = context.value.currentPage;
+    const currentPage = reducerValue.currentPage;
     return (
         <Flex justify="center" gap="20px">
             <Button disabled={isPrevDisabled()} icon={<LeftOutlined/>}

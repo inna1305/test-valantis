@@ -1,28 +1,39 @@
-import {Layout, Spin} from 'antd';
+import {Layout} from 'antd';
 import {createContext, Dispatch, ReactElement, useEffect, useReducer, useState} from 'react';
 import Filters from '../components/Filters/Filters.tsx';
 import Products from '../components/Products/Products.tsx';
-import {Action, initialState, IReducerAction, IReducerState, reducer} from './reducer.ts';
 import {fetchData, PRODUCTS_PER_PAGE} from '../functions/requests.ts';
+import {Action, initialState, IReducerAction, IReducerState, reducer} from './contexts/itemsContext/reducer.ts';
 
 const {Sider, Content, Footer} = Layout;
 
-interface IReducerContextValue {
+export interface IIsLoadingContextValue {
+    value: boolean,
+    setValue: Dispatch<boolean>
+}
+
+export interface IReducerContextValue {
     value: IReducerState,
     setValue: Dispatch<IReducerAction>
 }
 
-const initContextValue: IReducerContextValue = {
-    value: initialState,
-    setValue: () => {}
+export const initIsLoadingValue: IIsLoadingContextValue = {
+    value: false,
+    setValue: () => {
+    }
 }
-
+export const initContextValue: IReducerContextValue = {
+    value: initialState,
+    setValue: () => {
+    }
+}
 export const ReducerContext = createContext<IReducerContextValue>(initContextValue);
+export const IsLoadingContext = createContext(initIsLoadingValue);
 const App = (): ReactElement => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const [isLoading, setIsLoading] = useState(true);
-
     useEffect(() => {
+        setIsLoading(true);
         fetchData(1, null).then((items) => {
             dispatch({
                 type: Action.setItems,
@@ -36,7 +47,7 @@ const App = (): ReactElement => {
     return (
         <Layout hasSider style={{minHeight: '100vh'}}>
             <ReducerContext.Provider value={{value: state, setValue: dispatch}}>
-                <Sider
+                <IsLoadingContext.Provider value={{value: isLoading, setValue: setIsLoading}}> <Sider
                     width="360"
                     style={{
                         position: 'fixed',
@@ -46,31 +57,29 @@ const App = (): ReactElement => {
                     }}>
                     <Filters/>
                 </Sider>
-                <Layout style={{marginLeft: 360}}> {
-                    <Content
-                        style={{
-                            margin: '0 16px 0 0px',
-                            padding: 24,
-                            minHeight: 280,
-                            background: 'light',
-                            borderRadius: '10px',
-                        }}>
-                        {isLoading ?
-                            <Spin tip="Загрузка..." size="large" style={{marginTop: '20%'}}>
-                                <div className="content"/>
-                            </Spin> :
-                            <Products/>}
-                    </Content>}
-                    <Footer
-                        style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            columnGap: '5px'
-                        }}>
-                        Turova Inna {new Date().getFullYear()} <a href="https://github.com/inna1305">GitHub</a>
-                    </Footer>
-                </Layout>
+                    <Layout style={{marginLeft: 360}}> {
+                        <Content
+                            style={{
+                                margin: '0 16px 0 0px',
+                                padding: 24,
+                                minHeight: 280,
+                                background: 'light',
+                                borderRadius: '10px',
+                            }}>
+                            <Products/>
+                        </Content>}
+
+                        <Footer
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                columnGap: '5px'
+                            }}>
+                            Turova Inna {new Date().getFullYear()} <a href="https://github.com/inna1305">GitHub</a>
+                        </Footer>
+                    </Layout>
+                </IsLoadingContext.Provider>
             </ReducerContext.Provider>
         </Layout>
     );
