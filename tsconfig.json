@@ -20,6 +20,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": [
+    "../testvalantis/src"
+  ],
+  "references": [{ "path": "../testvalantis/tsconfig.node.json"}]
 }
