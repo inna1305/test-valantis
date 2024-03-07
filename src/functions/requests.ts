@@ -4,7 +4,7 @@ import {IFilterValue, IItem} from '../types.ts';
 import getTimestamp from '../helpers/getTimestamp.ts';
 import {retryOnError} from '../helpers/retryRequest.ts';
 
-const URL = 'http://api.valantis.store:40000/';
+const URL = 'https://api.valantis.store:41000/';
 const PASSWORD = 'Valantis';
 export const PRODUCTS_PER_PAGE = 50;
 
